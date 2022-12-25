@@ -1,5 +1,7 @@
 import { Messages } from '../models/msgModel.js';
 
+
+//get messages
 export const getMessages = async (req, res, next) => {
   try {
     const { from, to } = req.body;
@@ -22,6 +24,8 @@ export const getMessages = async (req, res, next) => {
   }
 };
 
+
+//send messages
 export const sendMessage = async (req, res, next) => {
   try {
     const { from, to, message } = req.body;

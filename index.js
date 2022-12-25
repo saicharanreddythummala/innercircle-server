@@ -5,8 +5,8 @@ import { createConnection } from './config/db.js';
 import { userRoutes } from './routes/userRoutes.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { msgRoutes } from './routes/msgRoutes.js';
-import { Server, Socket } from 'socket.io';
-import {createServer} from 'http'
+import { Server } from 'socket.io';
+import { createServer } from 'http';
 
 dotenv.config();
 
@@ -27,36 +27,37 @@ const app = express();
 
 const server = createServer(app);
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-
-
 
 const io = new Server(server, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
     credentials: true,
-  },});
+  },
+});
 
 global.onlineUsers = new Map();
 
-  io.on('connection', (socket) => {
+io.on('connection', (socket) => {
+  global.chatSocket = socket;
 
-    global.chatSocket = socket;
-
-    socket.on('add-user', (userId) => {
-      onlineUsers.set(userId, socket.id);
-    });
-  
-    socket.on('send-msg', (data) => {
-      const sendUserSocket = onlineUsers.get(data.to);
-      if (sendUserSocket) {
-        socket.to(sendUserSocket).emit('msg-recieve', data.msg);
-      }
-    });
-  
+  socket.on('add-user', (userId) => {
+    onlineUsers.set(userId, socket.id);
   });
+
+  socket.on('send-msg', (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit('msg-recieve', data.msg);
+    }
+  });
+});
 
 //using routes
 app.use('/api/user', userRoutes);
@@ -72,7 +73,6 @@ app.use(errorMiddleware);
 server.listen(PORT, () => {
   console.log(`App is up and running on ${PORT}`);
 });
-
 
 //unhandled promise rejection
 process.on('unhandledRejection', (err) => {
