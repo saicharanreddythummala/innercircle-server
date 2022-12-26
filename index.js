@@ -27,7 +27,6 @@ createConnection();
 
 const app = express();
 
-
 const corsOptions = {
   origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
 };
@@ -50,14 +49,14 @@ const server = app.listen(PORT, () => {
   console.log(`App is up and running on ${PORT}`);
 });
 
-
-
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
+    transports: ['websocket', 'polling'],
     credentials: true,
   },
+  allowEIO3: true,
 });
 
 io.on('connection', (socket) => {
@@ -72,12 +71,10 @@ io.on('connection', (socket) => {
 
     if (user) {
       socket.to(user.socketId).emit('receive-msg', data.msg);
-      console.log(data.msg)
+      console.log(data.msg);
     }
   });
-}
-);
-
+});
 
 //unhandled promise rejection
 process.on('unhandledRejection', (err) => {
