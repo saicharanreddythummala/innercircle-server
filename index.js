@@ -5,7 +5,7 @@ import { createConnection } from './config/db.js';
 import { userRoutes } from './routes/userRoutes.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { msgRoutes } from './routes/msgRoutes.js';
-import  {Server} from 'socket.io';
+import { Server } from 'socket.io';
 
 dotenv.config();
 
@@ -21,7 +21,6 @@ const PORT = process.env.PORT;
 
 const users = [];
 
-
 //db connection
 createConnection();
 
@@ -35,8 +34,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
-
 
 //using routes
 app.use('/api/user', userRoutes);
@@ -56,24 +53,22 @@ const server = app.listen(PORT, () => {
 const io = new Server(server, {
   cors: {
     origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
-    credentials: true
+    credentials: true,
   },
 });
 
-
-
 io.on('connection', (socket) => {
-
   socket.on('add-user', (userId) => {
-    if(!users.find(user=>user.userId === userId)){
-      users.push({userId, socketId: socket.id})
+    if (!users.some((user) => user.userId === userId)) {
+      users.push({ userId, socketId: socket.id });
     }
   });
 
   socket.on('send-msgs', (data) => {
-    const user = users.find(user=> user.userId === data.to)
+    const user = users.find((user) => user.userId === data.to);
+
     if (user) {
-      socket.to(user.socketId).emit("recieve", data.msg);
+      socket.to(user.socketId).emit('receive-msg', data.msg)
     }
   });
 });
