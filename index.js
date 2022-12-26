@@ -10,13 +10,6 @@ import http from 'http';
 
 dotenv.config();
 
-//handling uncaught exception
-process.on('uncaughtException', (err) => {
-  console.log(`Error: ${err.message}`);
-  console.log(`Server shut down due to uncaught exception error`);
-
-  process.exit(1);
-});
 
 const PORT = process.env.PORT;
 
@@ -58,6 +51,8 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
+  console.log('New Connection');
+
   socket.on('add-user', (userId) => {
     if (!users.some((user) => user.userId === userId)) {
       users.push({ userId, socketId: socket.id });
@@ -68,25 +63,16 @@ io.on('connection', (socket) => {
     const user = users.find((user) => user.userId === data.to);
 
     if (user) {
-      socket.to(user.socketId).emit('receive-msg', data.msg);
-      console.log(data.msg);
+      io.to(user.socketId).emit('receive-msg', data.msg);
     }
   });
-});
 
-io.engine.on("connection_error", (err) => {
-  console.log(err);
-});
-
-//unhandled promise rejection
-process.on('unhandledRejection', (err) => {
-  console.log(`Error: ${err.message}`);
-  console.log(`Server shut down due to unhandled Promise Rejection`);
-
-  server.close(() => {
-    process.exit(1);
+  socket.on('disconnect', () => {
+    console.log(`user left`);
   });
 });
 
 
-server.listen(PORT, ()=>{console.log(`App is up and running on ${PORT}`)})
+server.listen(PORT, () => {
+  console.log(`App is up and running on ${PORT}`);
+});
