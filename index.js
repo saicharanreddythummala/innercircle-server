@@ -74,6 +74,10 @@ io.on('connection', (socket) => {
   });
 });
 
+io.engine.on("connection_error", (err) => {
+  console.log(err);
+});
+
 //unhandled promise rejection
 process.on('unhandledRejection', (err) => {
   console.log(`Error: ${err.message}`);
