@@ -6,6 +6,7 @@ import { userRoutes } from './routes/userRoutes.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { msgRoutes } from './routes/msgRoutes.js';
 import { Server } from 'socket.io';
+import { createServer } from 'http';
 
 dotenv.config();
 
@@ -26,7 +27,6 @@ createConnection();
 
 const app = express();
 
-// const server = createServer(app);
 
 const corsOptions = {
   origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
@@ -50,11 +50,13 @@ const server = app.listen(PORT, () => {
   console.log(`App is up and running on ${PORT}`);
 });
 
+
+
 const io = new Server(server, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
-    credentials: true
+    credentials: true,
   },
 });
 
@@ -69,10 +71,13 @@ io.on('connection', (socket) => {
     const user = users.find((user) => user.userId === data.to);
 
     if (user) {
-      socket.to(user.socketId).emit('receive-msg', data.msg)
+      socket.to(user.socketId).emit('receive-msg', data.msg);
+      console.log(data.msg)
     }
   });
-});
+}
+);
+
 
 //unhandled promise rejection
 process.on('unhandledRejection', (err) => {
