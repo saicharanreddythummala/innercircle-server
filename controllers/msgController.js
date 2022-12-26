@@ -19,8 +19,8 @@ export const getMessages = async (req, res, next) => {
       };
     });
     res.json(projectedMessages);
-  } catch (ex) {
-    next(ex);
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -37,7 +37,7 @@ export const sendMessage = async (req, res, next) => {
 
     if (data) return res.json({ msg: 'Message added successfully.' });
     else return res.json({ msg: 'Failed to add message to the database' });
-  } catch (ex) {
-    next(ex);
+  } catch (err) {
+    next(err);
   }
 };

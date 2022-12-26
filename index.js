@@ -5,8 +5,7 @@ import { createConnection } from './config/db.js';
 import { userRoutes } from './routes/userRoutes.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { msgRoutes } from './routes/msgRoutes.js';
-import { Server } from 'socket.io';
-import { createServer } from 'http';
+import  {Server} from 'socket.io';
 
 dotenv.config();
 
@@ -20,12 +19,15 @@ process.on('uncaughtException', (err) => {
 
 const PORT = process.env.PORT;
 
+const users = [];
+
+
 //db connection
 createConnection();
 
 const app = express();
 
-const server = createServer(app);
+// const server = createServer(app);
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -34,29 +36,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    credentials: true,
-  },
-});
 
-global.onlineUsers = new Map();
-
-io.on('connection', (socket) => {
-  global.chatSocket = socket;
-
-  socket.on('add-user', (userId) => {
-    onlineUsers.set(userId, socket.id);
-  });
-
-  socket.on('send-msg', (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit('msg-recieve', data.msg);
-    }
-  });
-});
 
 //using routes
 app.use('/api/user', userRoutes);
@@ -69,8 +49,33 @@ app.get('/', (req, res) => {
 app.use(errorMiddleware);
 
 //server
-server.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`App is up and running on ${PORT}`);
+});
+
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true
+  },
+});
+
+
+
+io.on('connection', (socket) => {
+
+  socket.on('add-user', (userId) => {
+    if(!users.find(user=>user.userId === userId)){
+      users.push({userId, socketId: socket.id})
+    }
+  });
+
+  socket.on('send-msgs', (data) => {
+    const user = users.find(user=> user.userId === data.to)
+    if (user) {
+      socket.to(user.socketId).emit("recieve", data.msg);
+    }
+  });
 });
 
 //unhandled promise rejection

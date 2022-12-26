@@ -61,8 +61,8 @@ const userLogin = async (req, res, next) => {
 //set avatar
 const userAvatar = async (req, res, err) => {
   try {
-    const userId = req.params.id;
 
+    const userId = req.params.id;
     const avatar = req.body.image;
     const userData = await User.findByIdAndUpdate(
       userId,
