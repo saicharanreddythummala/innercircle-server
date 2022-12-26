@@ -30,7 +30,7 @@ const app = express();
 // const server = createServer(app);
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://innercircle-server.vercel.app'],
+  origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
 };
 
 app.use(cors(corsOptions));
@@ -55,7 +55,7 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:3000', 'https://innercircle-server.vercel.app'],
+    origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
     credentials: true
   },
 });
