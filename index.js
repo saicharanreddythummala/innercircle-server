@@ -6,7 +6,7 @@ import { userRoutes } from './routes/userRoutes.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import { msgRoutes } from './routes/msgRoutes.js';
 import { Server } from 'socket.io';
-import { createServer } from 'http';
+import http from 'http';
 
 dotenv.config();
 
@@ -45,9 +45,7 @@ app.get('/', (req, res) => {
 app.use(errorMiddleware);
 
 //server
-const server = app.listen(PORT, () => {
-  console.log(`App is up and running on ${PORT}`);
-});
+const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
@@ -85,3 +83,6 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+
+server.listen(PORT, ()=>{console.log(`App is up and running on ${PORT}`)})
