@@ -52,7 +52,7 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://innercircle.netlify.app',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
 });
