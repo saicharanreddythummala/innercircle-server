@@ -30,7 +30,7 @@ const app = express();
 // const server = createServer(app);
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://innercircle-server.vercel.app'],
 };
 
 app.use(cors(corsOptions));
