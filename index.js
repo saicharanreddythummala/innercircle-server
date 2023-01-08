@@ -42,9 +42,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
     methods: ['GET', 'POST'],
-    transports: ['websocket', 'polling'],
+    transports: ['websocket'],
     credentials: true,
   },
   allowEIO3: true,
