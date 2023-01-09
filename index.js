@@ -61,9 +61,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-msgs', (data) => {
-    console.log(data)
     const user = users.find((user) => user.userId === data.to);
-    console.log(user)
     if (user) {
       io.to(user.socketId).emit('receive-msg', data.msg);
       console.log('here')
