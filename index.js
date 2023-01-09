@@ -57,16 +57,16 @@ io.on('connection', (socket) => {
       users.push({ userId, socketId: socket.id });
     }
 
-    // console.log(users)
+    console.log(users)
   });
 
   socket.on('send-msgs', (data) => {
-    // console.log(data)
+    console.log(data)
     const user = users.find((user) => user.userId === data.to);
-    // console.log(user)
+    console.log(user)
     if (user) {
       io.to(user.socketId).emit('receive-msg', data.msg);
-      // console.log('here')
+      console.log('here')
     }
   });
 
