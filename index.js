@@ -44,7 +44,7 @@ const io = new Server(server, {
   cors: {
     origin: ['http://localhost:3000', 'https://innercircle.netlify.app'],
     methods: ['GET', 'POST'],
-    transports: ['websocket'],
+    transports: ['websocket','polling'],
     credentials: true,
   },
   allowEIO3: true,
@@ -62,6 +62,7 @@ io.on('connection', (socket) => {
 
   socket.on('send-msgs', (data) => {
     const user = users.find((user) => user.userId === data.to);
+    console.log(data)
     if (user) {
       io.to(user.socketId).emit('receive-msg', data.msg);
       console.log('here')
