@@ -64,8 +64,8 @@ io.on('connection', (socket) => {
     const user = users.find((user) => user.userId === data.to);
     console.log(data)
     if (user) {
-      io.to(user.socketId).emit('receive-msg', data.msg);
-      console.log('here')
+    const res =  io.to(user.socketId).emit('receive-msg', data.msg);
+      console.log(res)
     }
   });
 
