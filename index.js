@@ -13,7 +13,7 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 
-const users = [];
+let users = [];
 
 //db connection
 createConnection();
@@ -57,20 +57,20 @@ io.on('connection', (socket) => {
       users.push({ userId, socketId: socket.id });
     }
 
-    console.log(users)
+    // console.log(users)
   });
 
   socket.on('send-msgs', (data) => {
     const user = users.find((user) => user.userId === data.to);
     console.log(data)
     if (user) {
-    const res =  io.to(user.socketId).emit('response', data.msg);
-      console.log(res)
+    io.to(user.socketId).emit('response', data.msg);
     }
   });
 
   socket.on('disconnect', () => {
-    console.log(`user left`);
+    console.log(`user left`, socket.id);
+    users = users.filter(x=> x.socketId !== socket.id);
   });
 });
 
